@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1065255062969",
+    "project_id": "presensi-8501e",
+    "storage_bucket": "presensi-8501e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065255062969:android:c2359a8040bcc920dd3a68",
+        "android_client_info": {
+          "package_name": "com.unustudents.presensi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1065255062969-qcnj6egu3ob0l4t5q60tts11r0eqnv4r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unustudents.presensi",
+            "certificate_hash": "bae833513fa202c3b07bf09caad2f32ff9838bca"
+          }
+        },
+        {
+          "client_id": "1065255062969-1kla1epjb6839jm75u7l0ksld5o7ipbt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQs3Juk45BJZJqCxLUt-_knljS2MYaT1s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1065255062969-1kla1epjb6839jm75u7l0ksld5o7ipbt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1065255062969-et5ats4hod31m1bd7vmfjgpmfqfgddmi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.unustudents.presensi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
