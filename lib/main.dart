@@ -14,7 +14,7 @@ void main() async {
   runApp(
     StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return MaterialApp(
             home: Scaffold(
@@ -27,8 +27,10 @@ void main() async {
         print(snapshot.data);
         return GetMaterialApp(
           title: "Application",
-          initialRoute: snapshot.data != null ? AppPages.INITIAL : Routes.LOGIN,
-          // initialRoute: Routes.LOGIN,
+          initialRoute:
+              snapshot.data != null && snapshot.data!.emailVerified != false
+                  ? AppPages.INITIAL
+                  : Routes.LOGIN,
           getPages: AppPages.routes,
         );
       },
