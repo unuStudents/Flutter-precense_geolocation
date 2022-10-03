@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:presensi/app/routes/app_pages.dart';
 
 import '../controllers/login_controller.dart';
 
@@ -45,7 +46,9 @@ class LoginView extends GetView<LoginController> {
                     Text(controller.isLoading.isFalse ? "LOGIN" : "LOADING..."),
               ),
             ),
-            TextButton(onPressed: () {}, child: Text("Lupa Password ?"))
+            TextButton(
+                onPressed: () => Get.toNamed(Routes.FORGET_PASSWORD),
+                child: Text("Lupa Password ?"))
           ],
         ));
   }
