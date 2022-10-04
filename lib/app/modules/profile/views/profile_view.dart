@@ -22,6 +22,8 @@ class ProfileView extends GetView<ProfileController> {
           }
           if (snap.hasData) {
             Map<String, dynamic> user = snap.data!.data()!;
+            String defaultImage =
+                "https://ui-avatars.com/api/?name=${user['name']}&background=random&color=fff&bold=true";
             return ListView(
               padding: EdgeInsets.all(20),
               children: [
@@ -31,8 +33,13 @@ class ProfileView extends GetView<ProfileController> {
                     ClipOval(
                       child: Container(
                         height: 100,
+                        width: 100,
                         child: Image.network(
-                          "https://ui-avatars.com/api/?name=${user['name']}&background=random&color=fff&bold=true",
+                          user["profileImg"] != null
+                              ? user["profileImg"] != ""
+                                  ? user["profileImg"]
+                                  : defaultImage
+                              : defaultImage,
                           fit: BoxFit.cover,
                         ),
                       ),

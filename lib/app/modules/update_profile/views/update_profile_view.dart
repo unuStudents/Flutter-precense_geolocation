@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -47,6 +49,51 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
               labelText: "Email",
               border: OutlineInputBorder(),
             ),
+          ),
+          SizedBox(height: 25),
+          Text("Foto Profil", style: TextStyle(fontWeight: FontWeight.bold)),
+          SizedBox(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GetBuilder<UpdateProfileController>(
+                builder: (c) {
+                  if (c.image != null) {
+                    return ClipOval(
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        child: Image.file(
+                          File(c.image!.path),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  } else {
+                    if (user["profileImg"] != null) {
+                      return ClipOval(
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          child: Image.network(
+                            user["profileImg"],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Text("NO IMAGE");
+                    }
+                  }
+                },
+              ),
+              TextButton(
+                onPressed: () {
+                  controller.pickImage();
+                },
+                child: Text("Choose"),
+              ),
+            ],
           ),
           SizedBox(height: 30),
           Obx(

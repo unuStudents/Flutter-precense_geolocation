@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import 'package:image_picker/image_picker.dart';
+
 class UpdateProfileController extends GetxController {
   RxBool isLoading = false.obs;
 
@@ -10,6 +12,7 @@ class UpdateProfileController extends GetxController {
   TextEditingController emailC = TextEditingController();
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final ImagePicker _picker = ImagePicker();
 
   Future<void> updateProfile(String uid) async {
     if (nimC.text.isNotEmpty &&
@@ -28,5 +31,15 @@ class UpdateProfileController extends GetxController {
         isLoading.value = false;
       }
     }
+  }
+
+  XFile? image;
+  void pickImage() async {
+    // Pick an image
+    image = await _picker.pickImage(source: ImageSource.gallery);
+
+    // Capture a photo
+    // final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    update();
   }
 }
