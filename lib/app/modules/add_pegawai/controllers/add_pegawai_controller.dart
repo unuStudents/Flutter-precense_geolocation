@@ -8,6 +8,7 @@ class AddPegawaiController extends GetxController {
   RxBool isLoadingAddPegawai = false.obs;
   TextEditingController nimC = TextEditingController();
   TextEditingController nameC = TextEditingController();
+  TextEditingController jobC = TextEditingController();
   TextEditingController emailC = TextEditingController();
   TextEditingController passAdminC = TextEditingController();
 
@@ -38,6 +39,7 @@ class AddPegawaiController extends GetxController {
           firestore.collection("pegawai").doc(uid).set({
             "nip": nimC.text,
             "name": nameC.text,
+            "job": jobC.text,
             "email": emailC.text,
             "uid": uid,
             "role": "Anggota",
@@ -84,6 +86,7 @@ class AddPegawaiController extends GetxController {
   Future<void> addPegawai() async {
     if (nimC.text.isNotEmpty &&
         nameC.text.isNotEmpty &&
+        jobC.text.isNotEmpty &&
         emailC.text.isNotEmpty) {
       isLoading.value = true;
       Get.defaultDialog(
@@ -124,7 +127,7 @@ class AddPegawaiController extends GetxController {
       );
     } else {
       Get.snackbar(
-          "Terjadi Kesalahan !", "NIM, Nama, atau Email harus sesuai !");
+          "Terjadi Kesalahan !", "NIM, Nama, Job, atau Email harus sesuai !");
     }
   }
 }

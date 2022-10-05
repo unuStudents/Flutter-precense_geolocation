@@ -12,6 +12,7 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
   Widget build(BuildContext context) {
     controller.nimC.text = user["nip"];
     controller.nameC.text = user["name"];
+    controller.jobC.text = user["job"];
     controller.emailC.text = user["email"];
     return Scaffold(
       appBar: AppBar(
@@ -37,6 +38,16 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
             controller: controller.nameC,
             decoration: InputDecoration(
               labelText: "Nama",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          SizedBox(height: 20),
+          TextField(
+            autocorrect: false,
+            readOnly: false,
+            controller: controller.jobC,
+            decoration: InputDecoration(
+              labelText: "Job",
               border: OutlineInputBorder(),
             ),
           ),
