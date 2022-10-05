@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:presensi/app/routes/app_pages.dart';
 
@@ -5,6 +8,10 @@ import 'package:geolocator/geolocator.dart';
 
 class PageIndexController extends GetxController {
   RxInt pageIndex = 1.obs;
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // FirebaseStorage firestore = FirebaseStorage.instance;
 
   void changePage(int i) async {
     // print('click index=$i');
@@ -22,12 +29,21 @@ class PageIndexController extends GetxController {
         Map<String, dynamic> dataResponse = await _determinePosition();
         if (dataResponse["error"] != true) {
           Position position = dataResponse["Position"];
+          await updatePosition(position);
           Get.snackbar(dataResponse["Msg"],
               "${position.latitude} . ${position.longitude}");
         } else {
           Get.snackbar("Terjadi Kesalahan", dataResponse["Msg"]);
         }
     }
+  }
+
+  Future<void> updatePosition(Position position) async {
+    String uid = await auth.currentUser!.uid;
+
+    await firestore.collection("pegawai").doc(uid).update({
+      "position": {"lat": position.latitude, "long": position.longitude}
+    });
   }
 
   /// Determine the current position of the device.
