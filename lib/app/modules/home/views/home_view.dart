@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi/app/controllers/page_index_controller.dart';
+import 'package:presensi/app/routes/app_pages.dart';
 
 import '../controllers/home_controller.dart';
 
@@ -150,7 +151,7 @@ class HomeView extends GetView<HomeController> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () => Get.toNamed(Routes.ALL_PRESENSI),
                       child: Text("See More"),
                     ),
                   ],
@@ -161,52 +162,69 @@ class HomeView extends GetView<HomeController> {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: 5,
                   itemBuilder: (context, index) {
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 15),
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Material(
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.amber,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Masuk",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "${DateFormat.yMMMEd().format(DateTime.now())}",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                        child: InkWell(
+                          onTap: () => Get.toNamed(Routes.DETAIL_PRESENSI),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            // margin: EdgeInsets.only(bottom: 15),
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              // color: Colors.amber,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Masuk",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "${DateFormat.yMMMEd().format(DateTime.now())}",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "${DateFormat.jms().format(DateTime.now())}",
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Keluar",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "${DateFormat.yMMMEd().format(DateTime.now())}",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "${DateFormat.jms().format(DateTime.now())}",
+                                ),
+                              ],
+                            ),
                           ),
-                          Text(
-                            "${DateFormat.jms().format(DateTime.now())}",
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Keluar",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "${DateFormat.yMMMEd().format(DateTime.now())}",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            "${DateFormat.jms().format(DateTime.now())}",
-                          ),
-                        ],
+                        ),
                       ),
                     );
                   },
