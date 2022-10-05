@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import 'package:presensi/app/modules/add_pegawai/bindings/add_pegawai_binding.dart';
 import 'package:presensi/app/modules/add_pegawai/views/add_pegawai_view.dart';
+import 'package:presensi/app/modules/detail_presensi/bindings/detail_presensi_binding.dart';
+import 'package:presensi/app/modules/detail_presensi/views/detail_presensi_view.dart';
 import 'package:presensi/app/modules/forget_password/bindings/forget_password_binding.dart';
 import 'package:presensi/app/modules/forget_password/views/forget_password_view.dart';
 import 'package:presensi/app/modules/home/bindings/home_binding.dart';
@@ -26,10 +28,10 @@ class AppPages {
 
   static final routes = [
     GetPage(
-      name: _Paths.HOME,
-      page: () => HomeView(),
-      binding: HomeBinding(),
-    ),
+        name: _Paths.HOME,
+        page: () => HomeView(),
+        binding: HomeBinding(),
+        transition: Transition.noTransition),
     GetPage(
       name: _Paths.ADD_PEGAWAI,
       page: () => AddPegawaiView(),
@@ -64,6 +66,11 @@ class AppPages {
       name: _Paths.UPDATE_PASSWORD,
       page: () => UpdatePasswordView(),
       binding: UpdatePasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_PRESENSI,
+      page: () => DetailPresensiView(),
+      binding: DetailPresensiBinding(),
     ),
   ];
 }
