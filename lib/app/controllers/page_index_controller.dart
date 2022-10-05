@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:presensi/app/routes/app_pages.dart';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class PageIndexController extends GetxController {
   RxInt pageIndex = 1.obs;
@@ -29,20 +30,28 @@ class PageIndexController extends GetxController {
         Map<String, dynamic> dataResponse = await _determinePosition();
         if (dataResponse["error"] != true) {
           Position position = dataResponse["Position"];
-          await updatePosition(position);
-          Get.snackbar(dataResponse["Msg"],
-              "${position.latitude} . ${position.longitude}");
+
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+              position.latitude, position.longitude);
+
+          String address =
+              "${placemarks[0].street}, ${placemarks[0].subLocality}, ${placemarks[0].locality}";
+
+          await updatePosition(position, address);
+
+          Get.snackbar(dataResponse["Msg"], address);
         } else {
           Get.snackbar("Terjadi Kesalahan", dataResponse["Msg"]);
         }
     }
   }
 
-  Future<void> updatePosition(Position position) async {
+  Future<void> updatePosition(Position position, String address) async {
     String uid = await auth.currentUser!.uid;
 
     await firestore.collection("pegawai").doc(uid).update({
-      "position": {"lat": position.latitude, "long": position.longitude}
+      "position": {"lat": position.latitude, "long": position.longitude},
+      "address": address
     });
   }
 

@@ -65,22 +65,23 @@ class HomeView extends GetView<HomeController> {
                         SizedBox(height: 7),
                         Row(
                           children: [
-                            user['position'] != null
-                                ? Icon(
-                                    Icons.place,
-                                    size: 15,
-                                    color: Colors.amber,
-                                  )
-                                : Icon(
-                                    Icons.location_disabled,
-                                    size: 15,
-                                    color: Colors.amber,
-                                  ),
+                            Icon(
+                              user['position'] != null
+                                  ? Icons.place
+                                  : Icons.location_disabled,
+                              size: 15,
+                              color: Colors.amber,
+                            ),
                             SizedBox(width: 5),
-                            user['position'] != null
-                                ? Text(
-                                    "${user['position']['lat']} && ${user['position']['long']}")
-                                : Text("Lokasi Non Aktif")
+                            Container(
+                              child: Text(
+                                user['address'] != null
+                                    ? "${user['address']}"
+                                    : "Lokasi Non Aktif",
+                                textAlign: TextAlign.start,
+                              ),
+                              width: 200,
+                            )
                           ],
                         ),
                       ],
