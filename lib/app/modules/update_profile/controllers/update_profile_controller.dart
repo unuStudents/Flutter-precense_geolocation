@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UpdateProfileController extends GetxController {
@@ -13,6 +15,7 @@ class UpdateProfileController extends GetxController {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
+  final storage = FirebaseStorage.instance;
 
   Future<void> updateProfile(String uid) async {
     if (nimC.text.isNotEmpty &&
@@ -20,11 +23,24 @@ class UpdateProfileController extends GetxController {
         emailC.text.isNotEmpty) {
       isLoading.value = true;
       try {
-        await firestore
-            .collection("pegawai")
-            .doc(uid)
-            .update({"name": nameC.text});
-        Get.snackbar("Berhasil", "Nama berhasil di update");
+        Map<String, dynamic> data = {
+          "name": nameC.text,
+        };
+        if (image != null) {
+          File file = File(image!.path);
+          String addPic = image!.name;
+          // String ext = image!.name.split(".").last;
+
+          await storage.ref('$uid/$addPic').putFile(file);
+          String urlImage = await storage.ref('$uid/$addPic').getDownloadURL();
+          // await storage.ref('$uid/profileImg.$ext').putFile(file);
+          // String urlImage =
+          //     await storage.ref('$uid/profileImg.$ext').getDownloadURL();
+
+          data.addAll({"profileImg": urlImage});
+        }
+        await firestore.collection("pegawai").doc(uid).update(data);
+        Get.snackbar("Berhasil", "Profil berhasil di update");
       } catch (e) {
         Get.snackbar("Terjadi Kesalahan", "Tidak dapat update profile");
       } finally {
