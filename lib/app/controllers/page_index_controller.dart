@@ -9,6 +9,7 @@ import 'package:geocoding/geocoding.dart';
 
 class PageIndexController extends GetxController {
   RxInt pageIndex = 1.obs;
+  RxBool isSnackBar = false.obs;
 
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -29,6 +30,7 @@ class PageIndexController extends GetxController {
       default:
         Map<String, dynamic> dataResponse = await _determinePosition();
         if (dataResponse["error"] != true) {
+          isSnackBar.value = false;
           Position position = dataResponse["Position"];
 
           List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -42,7 +44,9 @@ class PageIndexController extends GetxController {
           // PRESENSI
           await presensi(position, address);
 
-          Get.snackbar("Sukses", "Kamu telah mengisi daftar hadir");
+          // if (isSnackBar.isFalse) {
+          //   Get.snackbar("Sukses", "Kamu telah mengisi daftar hadir");
+          // }
         } else {
           Get.snackbar("Terjadi Kesalahan", dataResponse["Msg"]);
         }
@@ -72,8 +76,47 @@ class PageIndexController extends GetxController {
           "status": "Dalam Area"
         }
       });
+      Get.snackbar(
+          "Sukses", "Kamu telah mengisi daftar Masuk untuk pertama kali");
     } else {
-      //
+      // Ketika ssudah pernah absen --> cek hari ini udah absen belum?
+      DocumentSnapshot<Map<String, dynamic>> todayDocument =
+          await colPresen.doc(todayDocID).get();
+
+      if (todayDocument.exists == true) {
+        // Tinggal absen keluar / sudah 2 2 nya
+        Map<String, dynamic>? dataPresenToday = todayDocument.data();
+        if (dataPresenToday?["keluar"] != null) {
+          // Sudah absen
+          // isSnackBar.value = true;
+          Get.snackbar("Sudah woi !", "Lu udah absen weh, besok lagi");
+        } else {
+          // Belum
+          await colPresen.doc(todayDocID).update({
+            "keluar": {
+              "date": now.toIso8601String(),
+              "lat": position.latitude,
+              "long": position.longitude,
+              "address": address,
+              "status": "Dalam Area"
+            }
+          });
+          Get.snackbar("Sukses", "Kamu telah mengisi daftar Keluar");
+        }
+      } else {
+        // Absen masuk
+        await colPresen.doc(todayDocID).set({
+          "date": now.toIso8601String(),
+          "masuk": {
+            "date": now.toIso8601String(),
+            "lat": position.latitude,
+            "long": position.longitude,
+            "address": address,
+            "status": "Dalam Area"
+          }
+        });
+        Get.snackbar("Sukses", "Kamu telah mengisi daftar Masuk hari ini");
+      }
     }
   }
 
