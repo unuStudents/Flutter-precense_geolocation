@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi/app/routes/app_pages.dart';
@@ -75,20 +76,37 @@ class PageIndexController extends GetxController {
     }
 
     if (snapPresen.docs.length == 0) {
-      // Ketika belum pernah absen
-      await colPresen.doc(todayDocID).set({
-        "date": now.toIso8601String(),
-        "masuk": {
-          "date": now.toIso8601String(),
-          "lat": position.latitude,
-          "long": position.longitude,
-          "address": address,
-          "status": statusArea,
-          "jarak": jarak,
-        }
-      });
-      Get.snackbar(
-          "Sukses", "Kamu telah mengisi daftar Masuk untuk pertama kali");
+      await Get.defaultDialog(
+        title: "Apakah kamu yakin ?",
+        middleText:
+            "Apakah kamu yakin akan mengisi daftar hadir (MASUK) sekarang ?",
+        actions: [
+          OutlinedButton(
+            onPressed: () => Get.back(),
+            child: Text("CANCEL"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              // Ketika belum pernah absen
+              await colPresen.doc(todayDocID).set({
+                "date": now.toIso8601String(),
+                "masuk": {
+                  "date": now.toIso8601String(),
+                  "lat": position.latitude,
+                  "long": position.longitude,
+                  "address": address,
+                  "status": statusArea,
+                  "jarak": jarak,
+                }
+              });
+              Get.back();
+              Get.snackbar("Sukses",
+                  "Kamu telah mengisi daftar Masuk untuk pertama kali");
+            },
+            child: Text("YES"),
+          )
+        ],
+      );
     } else {
       // Ketika ssudah pernah absen --> cek hari ini udah absen belum?
       DocumentSnapshot<Map<String, dynamic>> todayDocument =
@@ -102,33 +120,65 @@ class PageIndexController extends GetxController {
           // isSnackBar.value = true;
           Get.snackbar("Sudah woi !", "Lu udah absen weh, besok lagi");
         } else {
-          // Belum
-          await colPresen.doc(todayDocID).update({
-            "keluar": {
-              "date": now.toIso8601String(),
-              "lat": position.latitude,
-              "long": position.longitude,
-              "address": address,
-              "status": statusArea,
-              "jarak": jarak,
-            }
-          });
-          Get.snackbar("Sukses", "Kamu telah mengisi daftar Keluar");
+          await Get.defaultDialog(
+            title: "Apakah kamu yakin ?",
+            middleText:
+                "Apakah kamu yakin akan mengisi daftar hadir (KELUAR) sekarang ?",
+            actions: [
+              OutlinedButton(
+                  onPressed: () => Get.back(), child: Text("CANCEL")),
+              ElevatedButton(
+                onPressed: () async {
+                  // Belum
+                  await colPresen.doc(todayDocID).update({
+                    "keluar": {
+                      "date": now.toIso8601String(),
+                      "lat": position.latitude,
+                      "long": position.longitude,
+                      "address": address,
+                      "status": statusArea,
+                      "jarak": jarak,
+                    }
+                  });
+                  Get.back();
+                  Get.snackbar("Sukses", "Kamu telah mengisi daftar Keluar");
+                },
+                child: Text("YES"),
+              )
+            ],
+          );
         }
       } else {
+        await Get.defaultDialog(
+          title: "Apakah kamu yakin ?",
+          middleText:
+              "Apakah kamu yakin akan mengisi daftar hadir (MASUK) sekarang ?",
+          actions: [
+            OutlinedButton(onPressed: () => Get.back(), child: Text("CANCEL")),
+            ElevatedButton(
+              onPressed: () async {
+                // Ketika belum pernah absen
+                await colPresen.doc(todayDocID).set({
+                  "date": now.toIso8601String(),
+                  "masuk": {
+                    "date": now.toIso8601String(),
+                    "lat": position.latitude,
+                    "long": position.longitude,
+                    "address": address,
+                    "status": statusArea,
+                    "jarak": jarak,
+                  }
+                });
+                Get.back();
+                Get.snackbar(
+                    "Sukses", "Kamu telah mengisi daftar Masuk hari ini");
+              },
+              child: Text("YES"),
+            )
+          ],
+        );
         // Absen masuk
-        await colPresen.doc(todayDocID).set({
-          "date": now.toIso8601String(),
-          "masuk": {
-            "date": now.toIso8601String(),
-            "lat": position.latitude,
-            "long": position.longitude,
-            "address": address,
-            "status": statusArea,
-            "jarak": jarak,
-          }
-        });
-        Get.snackbar("Sukses", "Kamu telah mengisi daftar Masuk hari ini");
+
       }
     }
   }
