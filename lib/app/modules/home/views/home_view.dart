@@ -124,28 +124,49 @@ class HomeView extends GetView<HomeController> {
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.amber,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        children: [
-                          Text("Masuk"),
-                          Text("-"),
-                        ],
-                      ),
-                      Container(
-                        width: 2,
-                        height: 40,
-                        color: Colors.black,
-                      ),
-                      Column(
-                        children: [
-                          Text("Keluar"),
-                          Text("-"),
-                        ],
-                      ),
-                    ],
-                  ),
+                  child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                      stream: controller.streamTodayPresensi(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        Map<String, dynamic>? dateToday = snapshot.data?.data();
+
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              children: [
+                                Text("Masuk"),
+                                SizedBox(height: 5),
+                                Text(dateToday?['masuk'] == null
+                                    ? "- - -"
+                                    : DateFormat.jms().format(DateTime.parse(
+                                        dateToday?['masuk']['date']))),
+                              ],
+                            ),
+                            Container(
+                              width: 2,
+                              height: 40,
+                              color: Colors.black,
+                            ),
+                            Column(
+                              children: [
+                                Text("Keluar"),
+                                SizedBox(height: 5),
+                                Text(dateToday?['keluar'] == null
+                                    ? "- - -"
+                                    : DateFormat.jms().format(DateTime.parse(
+                                        dateToday?['keluar']['date']))),
+                              ],
+                            ),
+                          ],
+                        );
+                      }),
                 ),
                 SizedBox(height: 20),
                 Divider(
