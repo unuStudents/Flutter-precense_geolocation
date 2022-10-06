@@ -76,14 +76,15 @@ class PageIndexController extends GetxController {
 
     if (snapPresen.docs.length == 0) {
       // Ketika belum pernah absen
-      colPresen.doc(todayDocID).set({
+      await colPresen.doc(todayDocID).set({
         "date": now.toIso8601String(),
         "masuk": {
           "date": now.toIso8601String(),
           "lat": position.latitude,
           "long": position.longitude,
           "address": address,
-          "status": statusArea
+          "status": statusArea,
+          "jarak": jarak,
         }
       });
       Get.snackbar(
@@ -108,7 +109,8 @@ class PageIndexController extends GetxController {
               "lat": position.latitude,
               "long": position.longitude,
               "address": address,
-              "status": statusArea
+              "status": statusArea,
+              "jarak": jarak,
             }
           });
           Get.snackbar("Sukses", "Kamu telah mengisi daftar Keluar");
@@ -122,7 +124,8 @@ class PageIndexController extends GetxController {
             "lat": position.latitude,
             "long": position.longitude,
             "address": address,
-            "status": statusArea
+            "status": statusArea,
+            "jarak": jarak,
           }
         });
         Get.snackbar("Sukses", "Kamu telah mengisi daftar Masuk hari ini");
