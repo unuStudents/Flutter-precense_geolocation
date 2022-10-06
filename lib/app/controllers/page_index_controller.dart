@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:presensi/app/routes/app_pages.dart';
 
 import 'package:geolocator/geolocator.dart';
@@ -39,10 +39,41 @@ class PageIndexController extends GetxController {
 
           await updatePosition(position, address);
 
-          Get.snackbar(dataResponse["Msg"], address);
+          // PRESENSI
+          await presensi(position, address);
+
+          Get.snackbar("Sukses", "Kamu telah mengisi daftar hadir");
         } else {
           Get.snackbar("Terjadi Kesalahan", dataResponse["Msg"]);
         }
+    }
+  }
+
+  Future<void> presensi(Position position, String address) async {
+    String uid = await auth.currentUser!.uid;
+
+    CollectionReference<Map<String, dynamic>> colPresen =
+        await firestore.collection("pegawai").doc(uid).collection("presence");
+
+    QuerySnapshot<Map<String, dynamic>> snapPresen = await colPresen.get();
+
+    DateTime now = DateTime.now();
+    String todayDocID = DateFormat.yMd().format(now).replaceAll("/", "-");
+
+    if (snapPresen.docs.length == 0) {
+      // Ketika belum pernah absen
+      colPresen.doc(todayDocID).set({
+        "date": now.toIso8601String(),
+        "masuk": {
+          "date": now.toIso8601String(),
+          "lat": position.latitude,
+          "long": position.longitude,
+          "address": address,
+          "status": "Dalam Area"
+        }
+      });
+    } else {
+      //
     }
   }
 
