@@ -41,8 +41,13 @@ class PageIndexController extends GetxController {
 
           await updatePosition(position, address);
 
+          // CEK JANGKAUAN
+          // Geolocator.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude)
+          double jarak = Geolocator.distanceBetween(
+              -7.6252321, 109.1134052, position.latitude, position.longitude);
+
           // PRESENSI
-          await presensi(position, address);
+          await presensi(position, address, jarak);
 
           // if (isSnackBar.isFalse) {
           //   Get.snackbar("Sukses", "Kamu telah mengisi daftar hadir");
@@ -53,7 +58,7 @@ class PageIndexController extends GetxController {
     }
   }
 
-  Future<void> presensi(Position position, String address) async {
+  Future<void> presensi(Position position, String address, double jarak) async {
     String uid = await auth.currentUser!.uid;
 
     CollectionReference<Map<String, dynamic>> colPresen =
@@ -63,6 +68,11 @@ class PageIndexController extends GetxController {
 
     DateTime now = DateTime.now();
     String todayDocID = DateFormat.yMd().format(now).replaceAll("/", "-");
+    String statusArea = "Luar Area";
+
+    if (jarak <= 200) {
+      statusArea = "Dalam Area";
+    }
 
     if (snapPresen.docs.length == 0) {
       // Ketika belum pernah absen
@@ -73,7 +83,7 @@ class PageIndexController extends GetxController {
           "lat": position.latitude,
           "long": position.longitude,
           "address": address,
-          "status": "Dalam Area"
+          "status": statusArea
         }
       });
       Get.snackbar(
@@ -98,7 +108,7 @@ class PageIndexController extends GetxController {
               "lat": position.latitude,
               "long": position.longitude,
               "address": address,
-              "status": "Dalam Area"
+              "status": statusArea
             }
           });
           Get.snackbar("Sukses", "Kamu telah mengisi daftar Keluar");
@@ -112,7 +122,7 @@ class PageIndexController extends GetxController {
             "lat": position.latitude,
             "long": position.longitude,
             "address": address,
-            "status": "Dalam Area"
+            "status": statusArea
           }
         });
         Get.snackbar("Sukses", "Kamu telah mengisi daftar Masuk hari ini");
