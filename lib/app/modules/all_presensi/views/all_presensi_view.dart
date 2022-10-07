@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi/app/routes/app_pages.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../controllers/all_presensi_controller.dart';
 
@@ -15,120 +16,127 @@ class AllPresensiView extends GetView<AllPresensiController> {
         title: Text('SEMUA PRESENSI'),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: TextField(
-              autocorrect: false,
-              readOnly: false,
-              // controller: controller.nameC,
-              decoration: InputDecoration(
-                labelText: "Search bar",
-                border: OutlineInputBorder(),
+      body: GetBuilder<AllPresensiController>(
+        builder: (c) => FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          future: controller.getPresence(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.data?.docs.length == 0 || snapshot.data == null) {
+              return SizedBox(
+                height: 100,
+                child: Center(
+                  child: Text("Belum ada histori absen sejak 5 hari yang lalu"),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              padding: EdgeInsets.all(15),
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> data =
+                    snapshot.data!.docs.reversed.toList()[index].data();
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Material(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.amber,
+                    child: InkWell(
+                      onTap: () =>
+                          Get.toNamed(Routes.DETAIL_PRESENSI, arguments: data),
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        // margin: EdgeInsets.only(bottom: 15),
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          // color: Colors.amber,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Masuk",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "${DateFormat.yMMMEd().format(DateTime.parse(data['date']))}",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              data['masuk']!['date'] == null
+                                  ? "- - -"
+                                  : "${DateFormat.jms().format(DateTime.parse(data['masuk']?['date']))}",
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Keluar",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                // Text(
+                                //   "${DateFormat.yMMMEd().format(DateTime.now())}",
+                                //   style: TextStyle(
+                                //       fontWeight: FontWeight.bold),
+                                // ),
+                              ],
+                            ),
+                            Text(
+                              data['keluar']?['date'] == null
+                                  ? "- - -"
+                                  : "${DateFormat.jms().format(DateTime.parse(data['keluar']?['date']))}",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // syncfusion_flutter_datepicker
+          Get.dialog(
+            Dialog(
+              child: Container(
+                padding: EdgeInsets.all(20),
+                height: 350,
+                child: SfDateRangePicker(
+                  selectionMode: DateRangePickerSelectionMode.range,
+                  showActionButtons: true,
+                  onCancel: () => Get.back(),
+                  onSubmit: (i) {
+                    if (i != null) {
+                      if ((i as PickerDateRange).endDate != null) {
+                        //
+                        controller.pickDate(i.startDate!, i.endDate!);
+                      } else {
+                        controller.pickDate(i.startDate!, i.startDate!);
+                      }
+                    }
+                  },
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream: controller.streamAllPresence(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-
-                  if (snapshot.data?.docs.length == 0 ||
-                      snapshot.data == null) {
-                    return SizedBox(
-                      height: 100,
-                      child: Center(
-                        child: Text(
-                            "Belum ada histori absen sejak 5 hari yang lalu"),
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    padding: EdgeInsets.all(15),
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      Map<String, dynamic> data =
-                          snapshot.data!.docs.reversed.toList()[index].data();
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Material(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.amber,
-                          child: InkWell(
-                            onTap: () => Get.toNamed(Routes.DETAIL_PRESENSI,
-                                arguments: data),
-                            borderRadius: BorderRadius.circular(10),
-                            child: Container(
-                              // margin: EdgeInsets.only(bottom: 15),
-                              padding: EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                // color: Colors.amber,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Masuk",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        "${DateFormat.yMMMEd().format(DateTime.parse(data['date']))}",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    data['masuk']!['date'] == null
-                                        ? "- - -"
-                                        : "${DateFormat.jms().format(DateTime.parse(data['masuk']?['date']))}",
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Keluar",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      // Text(
-                                      //   "${DateFormat.yMMMEd().format(DateTime.now())}",
-                                      //   style: TextStyle(
-                                      //       fontWeight: FontWeight.bold),
-                                      // ),
-                                    ],
-                                  ),
-                                  Text(
-                                    data['keluar']?['date'] == null
-                                        ? "- - -"
-                                        : "${DateFormat.jms().format(DateTime.parse(data['keluar']?['date']))}",
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }),
-          ),
-        ],
+          );
+        },
+        child: Icon(Icons.format_list_bulleted_rounded),
       ),
     );
   }
